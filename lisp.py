@@ -15,7 +15,9 @@ def main(argv):
     # calling it an AST?
     # TODO(jasonpr): Investigate.
     for ast in parser.parse_trees(tokens):
-        interpreter.execute(ast)
+        evaluation = interpreter.execute(ast)
+        if evaluation:
+            print evaluation
 
 if __name__ == '__main__':
     main(sys.argv)

@@ -5,7 +5,7 @@ import pyfuncs
 import datatypes
 
 def execute(ast):
-    print _eval(ast, base_env)
+    return _eval(ast, base_env)
 
 
 def _eval(expr, env):
