@@ -102,7 +102,13 @@ def _eval_define(data, env):
     name, expr = data
     env[name] = _eval(expr, env)
 
+def _eval_lambda(data, env):
+    assert len(data) == 2
+    arg_names, implementation = data
+    return datatypes.LispFunction(env, arg_names, implementation)
+
 evaluators = {
     'if': _eval_if,
     'define': _eval_define,
+    'lambda': _eval_lambda,
 }
