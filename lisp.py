@@ -3,9 +3,10 @@
 import sys
 
 import formatter
-import tokenizer
-import parser
 import interpreter
+import parser
+import tokenizer
+
 
 def main(argv):
     file_name = argv[1]
