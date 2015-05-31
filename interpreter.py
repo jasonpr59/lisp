@@ -32,16 +32,15 @@ def _eval_list(expr, env):
         evaluator = evaluators[directive]
     except KeyError:
         # It must be a function.  Apply it.
-        evaluator = Applier(env[directive], env)
-    return evaluator(data)
+        evaluator = Applier(env[directive])
+    return evaluator(data, env)
 
 class Applier(object):
-    def __init__(self, function, env):
+    def __init__(self, function):
         self._function = function
-        self._env = env
 
-    def __call__(self, lisp_args):
-        inputs = [_eval(arg, self._env) for arg in lisp_args]
+    def __call__(self, lisp_args, env):
+        inputs = [_eval(arg, env) for arg in lisp_args]
         if isinstance(self._function, types.FunctionType):
             # It's a builtin Python function.
             return self._function(inputs)
