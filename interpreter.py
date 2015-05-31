@@ -75,6 +75,16 @@ class Environment(object):
         """Give a value to a name in this environment."""
         self._vars[key] = value
 
+    def redefine(self, key, new_value):
+        if key in self._vars:
+            original = self._vars[key]
+            self._vars[key] = new_value
+            return original
+        elif not self._parent:
+            raise KeyError
+        else:
+            return self._parent.redefine(key, new_value)
+
     def child(self):
         return Environment(parent=self)
 
@@ -106,8 +116,14 @@ def _eval_lambda(data, env):
     arg_names, implementation = data
     return datatypes.LispFunction(env, arg_names, implementation)
 
+def _eval_set(data, env):
+    assert len(data) == 2
+    name, expr = data
+    return env.redefine(name, _eval(expr, env))
+
 evaluators = {
     'if': _eval_if,
     'define': _eval_define,
     'lambda': _eval_lambda,
+    'set!': _eval_set,
 }
