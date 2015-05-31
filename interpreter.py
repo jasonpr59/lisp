@@ -86,4 +86,20 @@ base_env = Environment()
 for name, value in functions.items():
     base_env[name] = value
 
-evaluators = {}
+# Evaluators.
+def _eval_if(expr, env):
+    assert len(expr) == 3
+    cond_expr = expr[0]
+    true_case_expr = expr[1]
+    false_case_expr = expr[2]
+
+    cond_value = _eval(cond_expr, env)
+    # Just use Python's truthiness rules.
+    # TODO(jasonpr): Implement custom truthiness rules.
+    result_expr = true_case_expr if cond_value else false_case_expr
+    return _eval(result_expr, env)
+
+
+evaluators = {
+    'if': _eval_if,
+}
