@@ -103,10 +103,28 @@ def _eval_begin(expressions, env):
         result = _eval(expression, env)
     return result
 
+def _eval_let(data, enclosing_env):
+    assert data
+    bindings, exprs = data[0], data[1:]
+
+    # Setup the new environment.
+    new_env = enclosing_env.child()
+    for binding in bindings:
+        assert len(binding) == 2
+        name, expr = binding
+        # Evaluate the expression in the enclosing environment,  and
+        # bind it into the new one.
+        new_env[name] = _eval(expr, enclosing_env)
+
+    # Evaluate the body expressions in the new environment,
+    # as though they were enclosed in a `begin` statement.
+    return _eval_begin(exprs, new_env)
+
 evaluators = {
     'if': _eval_if,
     'define': _eval_define,
     'lambda': _eval_lambda,
     'set!': _eval_set,
     'begin': _eval_begin,
+    'let': _eval_let,
 }
