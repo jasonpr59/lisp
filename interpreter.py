@@ -32,7 +32,8 @@ def _eval_list(expr, env):
         evaluator = evaluators[directive]
     except KeyError:
         # It must be a function.  Apply it.
-        evaluator = Applier(env[directive])
+        function = _eval(directive, env)
+        evaluator = Applier(function)
     return evaluator(data, env)
 
 class Applier(object):
