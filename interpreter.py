@@ -78,17 +78,9 @@ class Environment(object):
     def child(self):
         return Environment(parent=self)
 
-functions = {
-    '+': pyfuncs.add,
-    '*': pyfuncs.mul,
-    'list': pyfuncs.make_list,
-    'cons': pyfuncs.cons,
-    'car': pyfuncs.car,
-    'cdr': pyfuncs.cdr,
-}
 
 base_env = Environment()
-for name, value in functions.items():
+for name, value in pyfuncs.functions.items():
     base_env[name] = value
 
 # Evaluators.

@@ -2,30 +2,39 @@ import operator
 
 import datatypes
 
-def add(args):
+def _add(args):
     return sum(args)
 
-def mul(args):
+def _mul(args):
     return reduce(operator.mul, args)
 
-def car(args):
+def _car(args):
     assert len(args) == 1
     pair = args[0]
     assert isinstance(pair, datatypes.Pair)
     return pair.car
 
-def cdr(args):
+def _cdr(args):
     assert len(args) == 1
     pair = args[0]
     assert isinstance(pair, datatypes.Pair)
     return pair.cdr
 
-def cons(args):
+def _cons(args):
     assert len(args) == 2
     return datatypes.Pair(args[0], args[1])
 
-def make_list(args):
+def _make_list(args):
     result = datatypes.null
     for element in reversed(args):
-        result = cons([element, result])
+        result = _cons([element, result])
     return result
+
+functions = {
+    '+': _add,
+    '*': _mul,
+    'list': _make_list,
+    'cons': _cons,
+    'car': _car,
+    'cdr': _cdr,
+}
