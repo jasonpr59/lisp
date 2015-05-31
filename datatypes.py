@@ -17,4 +17,7 @@ class LispFunction(object):
         self.arg_names = arg_names
         self.expr = expr
 
+    def __repr__(self):
+        return "LispFunction[%s -> %s]" % (self.arg_names, self.expr)
+
 Pair = namedtuple('Pair', ['car', 'cdr'])
