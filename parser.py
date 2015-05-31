@@ -36,6 +36,6 @@ def _parse_element(token_supply):
 
 def parse_trees(token_supply):
     ast = _parse(token_supply)
-    while ast:
+    while ast is not None:
         yield ast
         ast = _parse(token_supply)

@@ -16,8 +16,8 @@ def main(argv):
     # TODO(jasonpr): Investigate.
     for ast in parser.parse_trees(tokens):
         evaluation = interpreter.execute(ast)
-        if evaluation:
             print evaluation
+        if evaluation is not None:
 
 if __name__ == '__main__':
     main(sys.argv)

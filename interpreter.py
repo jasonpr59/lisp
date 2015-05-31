@@ -27,6 +27,10 @@ def _eval_value(expr, env):
 
 
 def _eval_list(expr, env):
+    if not expr:
+        # It's a null value
+        return datatypes.null
+
     directive, data = expr[0], expr[1:]
     if isinstance(directive, str) and directive in evaluators:
         evaluator = evaluators[directive]
