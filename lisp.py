@@ -2,6 +2,7 @@
 
 import sys
 
+import formatter
 import tokenizer
 import parser
 import interpreter
@@ -16,8 +17,8 @@ def main(argv):
     # TODO(jasonpr): Investigate.
     for ast in parser.parse_trees(tokens):
         evaluation = interpreter.execute(ast)
-            print evaluation
         if evaluation is not None:
+            print formatter.lisp_format(evaluation)
 
 if __name__ == '__main__':
     main(sys.argv)
