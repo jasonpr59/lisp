@@ -23,3 +23,12 @@ class LispFunction(object):
 class Pair(namedtuple('Pair', ['car', 'cdr'])):
     def __repr__(self):
         return '(%s . %s)' % self
+
+class _Null(DataType):
+    def __repr__(self):
+        return '()'
+
+null = _Null()
+
+def is_null(data):
+    return data is null
