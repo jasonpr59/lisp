@@ -97,9 +97,16 @@ def _eval_set(data, env):
     name, expr = data
     return env.redefine(name, _eval(expr, env))
 
+def _eval_begin(expressions, env):
+    result = None
+    for expression in expressions:
+        result = _eval(expression, env)
+    return result
+
 evaluators = {
     'if': _eval_if,
     'define': _eval_define,
     'lambda': _eval_lambda,
     'set!': _eval_set,
+    'begin': _eval_begin,
 }
