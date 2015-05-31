@@ -28,9 +28,9 @@ def _eval_value(expr, env):
 
 def _eval_list(expr, env):
     directive, data = expr[0], expr[1:]
-    try:
+    if isinstance(directive, str) and directive in evaluators:
         evaluator = evaluators[directive]
-    except KeyError:
+    else:
         # It must be a function.  Apply it.
         function = _eval(directive, env)
         evaluator = Applier(function)
