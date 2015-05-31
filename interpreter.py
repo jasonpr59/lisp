@@ -1,9 +1,15 @@
 import string
 import types
 
-import pyfuncs
 import datatypes
 import environment
+import pyfuncs
+
+# Setup the base environment.
+base_env = environment.Environment()
+for name, value in pyfuncs.functions.items():
+    base_env[name] = value
+
 
 def execute(ast):
     return _eval(ast, base_env)
@@ -41,6 +47,7 @@ def _eval_list(expr, env):
         evaluator = Applier(function)
     return evaluator(data, env)
 
+
 class Applier(object):
     def __init__(self, function):
         self._function = function
@@ -58,9 +65,6 @@ class Applier(object):
             invocation_env[name] = value
         return _eval(self._function.expr, invocation_env)
 
-base_env = environment.Environment()
-for name, value in pyfuncs.functions.items():
-    base_env[name] = value
 
 # Evaluators.
 def _eval_if(data, env):
@@ -75,15 +79,18 @@ def _eval_if(data, env):
         result_expr = false_case_expr
     return _eval(result_expr, env)
 
+
 def _eval_define(data, env):
     assert len(data) == 2
     name, expr = data
     env[name] = _eval(expr, env)
 
+
 def _eval_lambda(data, env):
     assert len(data) == 2
     arg_names, implementation = data
     return datatypes.LispFunction(env, arg_names, implementation)
+
 
 def _eval_set(data, env):
     assert len(data) == 2
