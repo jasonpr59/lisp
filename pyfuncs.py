@@ -61,6 +61,10 @@ def _le(args):
     assert len(args) == 2
     return args[0] <= args [1]
 
+def _print(args):
+    for arg in args:
+        print arg
+
 functions = {
     '+': _add,
     '-': _sub,
@@ -74,4 +78,5 @@ functions = {
     '<': _lt,
     '>=': _ge,
     '<=': _le,
+    'print!': _print,
 }
