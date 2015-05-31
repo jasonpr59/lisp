@@ -88,9 +88,12 @@ def _eval_if(data, env):
     assert len(data) == 3
     cond_expr, true_case_expr, false_case_expr = data
     cond_value = _eval(cond_expr, env)
-    # Just use Python's truthiness rules.
-    # TODO(jasonpr): Implement custom truthiness rules.
-    result_expr = true_case_expr if cond_value else false_case_expr
+
+    # TODO(jasonpr): Fully customize truthiness rules.
+    if not datatypes.is_null(cond_value) and cond_value:
+        result_expr = true_case_expr
+    else:
+        result_expr = false_case_expr
     return _eval(result_expr, env)
 
 def _eval_define(data, env):
