@@ -47,11 +47,11 @@ class Applier(object):
             return self._function(inputs)
 
         # Otherwise, it's a LispFunction.
-        assert len(inputs) == len(function.arg_names)
-        invocation_env = function.env.child()
-        for name, value in zip(function.arg_names, inputs):
+        assert len(inputs) == len(self._function.arg_names)
+        invocation_env = self._function.env.child()
+        for name, value in zip(self._function.arg_names, inputs):
             invocation_env[name] = value
-        return _eval(function.expr, invocation_env)
+        return _eval(self._function.expr, invocation_env)
 
 
 class Environment(object):
