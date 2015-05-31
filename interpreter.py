@@ -96,7 +96,12 @@ def _eval_if(data, env):
     result_expr = true_case_expr if cond_value else false_case_expr
     return _eval(result_expr, env)
 
+def _eval_define(data, env):
+    assert len(data) == 2
+    name, expr = data
+    env[name] = _eval(expr, env)
 
 evaluators = {
     'if': _eval_if,
+    'define': _eval_define,
 }
