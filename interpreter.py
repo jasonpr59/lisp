@@ -87,12 +87,9 @@ for name, value in functions.items():
     base_env[name] = value
 
 # Evaluators.
-def _eval_if(expr, env):
-    assert len(expr) == 3
-    cond_expr = expr[0]
-    true_case_expr = expr[1]
-    false_case_expr = expr[2]
-
+def _eval_if(data, env):
+    assert len(data) == 3
+    cond_expr, true_case_expr, false_case_expr = data
     cond_value = _eval(cond_expr, env)
     # Just use Python's truthiness rules.
     # TODO(jasonpr): Implement custom truthiness rules.
