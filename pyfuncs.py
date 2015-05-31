@@ -25,5 +25,7 @@ def cons(args):
     return datatypes.Pair(args[0], args[1])
 
 def make_list(args):
-    # TODO(jasonpr): Implement.
-    raise NotImplementedError
+    result = datatypes.null
+    for element in reversed(args):
+        result = cons([element, result])
+    return result
