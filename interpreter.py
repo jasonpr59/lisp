@@ -15,7 +15,26 @@ def execute(ast):
     return _eval(ast, base_env)
 
 
-def _eval(expr, env):
+def _eval(expr, env, force=True):
+    """Evaluate an expression in an environment.
+
+    If 'force' is false, then this function could return a _DelayedCall,
+    which would need to be resolved later on.  If 'force' is True, a
+    _DelayedCall could be returned, unresolved.
+    """
+    value  = _eval_no_force(expr, env)
+    if force:
+        while isinstance(value, _DelayedCall):
+            value = _eval_no_force(value.function.expr, value.invocation_env)
+    return value
+
+
+def _eval_no_force(expr, env):
+    """Evaluate an expression in an environment.
+
+    This function may return a _DelayedCall-- it will not force the
+    immediate resolution of a result.
+    """
     if isinstance(expr, list):
         return _eval_list(expr, env)
     else:
@@ -70,7 +89,9 @@ class Applier(object):
         invocation_env = self._function.env.child()
         for name, value in zip(self._function.arg_names, inputs):
             invocation_env[name] = value
-        return _eval(self._function.expr, invocation_env)
+        # Return a delayed call, and let the calling context determine
+        # whether it must be resolved immediately.
+        return _DelayedCall(self._function, invocation_env)
 
 
 # Evaluators.
@@ -80,7 +101,7 @@ def _eval_if(data, env):
     cond_value = _eval(cond_expr, env)
 
     result_expr = true_case_expr if _is_truthy(cond_value) else false_case_expr
-    return _eval(result_expr, env)
+    return _eval(result_expr, env, force=False)
 
 
 def _eval_define(data, env):
@@ -101,10 +122,16 @@ def _eval_set(data, env):
     return env.redefine(name, _eval(expr, env))
 
 def _eval_begin(expressions, env):
-    result = None
-    for expression in expressions:
+    for expression in expressions[:-1]:
         result = _eval(expression, env)
-    return result
+
+    if expressions:
+        # The last one may be in a tail context, so we do not force
+        # it.
+        return _eval(expressions[-1], env, force=False)
+    else:
+        # An empty begin has no effect and returns nothing.
+        return None
 
 def _eval_let(data, enclosing_env):
     assert data
@@ -131,6 +158,20 @@ evaluators = {
     'begin': _eval_begin,
     'let': _eval_let,
 }
+
+
+class _DelayedCall(object):
+    """The data needed to carry out a function call.
+
+    Commonly, these calls will be forced as soon as they are created.
+    But, when a delayed call is created in a tail context, some cleanup
+    is performed before the call is forced.  This allows us to bound the
+    height of the stack when performing tail recursion.
+    """
+
+    def __init__(self, function, invocation_env):
+        self.function = function
+        self.invocation_env = invocation_env
 
 
 def _is_truthy(value):
