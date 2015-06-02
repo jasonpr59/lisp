@@ -28,6 +28,13 @@ def _eval_value(expr, env):
         return int(expr)
     elif expr[0] == "'":
         return datatypes.Symbol(expr)
+    elif expr[0] == '#':
+        if expr == '#t':
+            return datatypes.lisp_bool(True)
+        elif expr == '#f':
+            return datatypes.lisp_bool(False)
+        else:
+            raise ValueError('Unexpected literal `%s`.' % expr)
     else:
         # Assume it's a variable.
         return env[expr]
@@ -72,11 +79,7 @@ def _eval_if(data, env):
     cond_expr, true_case_expr, false_case_expr = data
     cond_value = _eval(cond_expr, env)
 
-    # TODO(jasonpr): Fully customize truthiness rules.
-    if not datatypes.is_null(cond_value) and cond_value:
-        result_expr = true_case_expr
-    else:
-        result_expr = false_case_expr
+    result_expr = true_case_expr if _is_truthy(cond_value) else false_case_expr
     return _eval(result_expr, env)
 
 
@@ -128,3 +131,10 @@ evaluators = {
     'begin': _eval_begin,
     'let': _eval_let,
 }
+
+
+def _is_truthy(value):
+    # Scheme defines nearly everything to be truthy.  Only #f is falsey!
+    # TODO(jasonpr): Consider violating the Scheme spec, and doing
+    # something more Pythonic.
+    return value != datatypes.lisp_bool(False)

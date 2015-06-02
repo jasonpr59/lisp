@@ -47,19 +47,19 @@ def _make_list(args):
 
 def _gt(args):
     assert len(args) == 2
-    return args[0] > args [1]
+    return datatypes.lisp_bool(args[0] > args [1])
 
 def _lt(args):
     assert len(args) == 2
-    return args[0] < args [1]
+    return datatypes.lisp_bool(args[0] < args [1])
 
 def _ge(args):
     assert len(args) == 2
-    return args[0] >= args [1]
+    return datatypes.lisp_bool(args[0] >= args [1])
 
 def _le(args):
     assert len(args) == 2
-    return args[0] <= args [1]
+    return datatypes.lisp_bool(args[0] <= args [1])
 
 def _print(args):
     for arg in args:
