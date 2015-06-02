@@ -27,6 +27,12 @@ def _base_env():
     for name, value in pyfuncs.functions.items():
         env[name] = value
 
+    # Provide some functions, written in Lisp.
+    BASE_LIB_FILENAMES = ['lib/builtin.lisp']
+    for lib_filename in BASE_LIB_FILENAMES:
+        with open(lib_filename) as lib_file:
+            _execute_file(lib_file, env)
+
     return env
 
 def main(argv):
