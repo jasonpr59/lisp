@@ -27,3 +27,8 @@ class Environment(object):
 
     def child(self):
         return Environment(parent=self)
+
+    def height(self):
+        if not self._parent:
+            return 1
+        return 1 + self._parent.height()
