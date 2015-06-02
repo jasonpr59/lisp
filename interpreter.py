@@ -2,17 +2,10 @@ import string
 import types
 
 import datatypes
-import environment
-import pyfuncs
 
-# Setup the base environment.
-base_env = environment.Environment()
-for name, value in pyfuncs.functions.items():
-    base_env[name] = value
-
-
-def execute(ast):
-    return _eval(ast, base_env)
+def execute(ast, env):
+    """The simple public interface to the evaluation system."""
+    return _eval(ast, env)
 
 
 def _eval(expr, env, force=True):
