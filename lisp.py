@@ -35,13 +35,19 @@ def _base_env():
 
     return env
 
+def _line_reader():
+    while True:
+        yield raw_input('jlisp > ')
+
 def main(argv):
     base_env = _base_env()
 
-    file_name = argv[1]
-    with open(file_name) as source_file:
-        _execute_file(source_file, base_env, print_results=True)
-
+    if len(argv) >= 2:
+        file_name = argv[1]
+        with open(file_name) as source_file:
+            _execute_file(source_file, base_env, print_results=True)
+    else:
+        _execute_file(_line_reader(), base_env, print_results=True)
 
 if __name__ == '__main__':
     main(sys.argv)
