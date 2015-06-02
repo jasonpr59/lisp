@@ -4,51 +4,57 @@ import tokens
 import string
 
 class TokenSupply(object):
-    def __init__(self, token_list):
-        self._token_list = token_list
-        self._index = 0
+    def __init__(self, tokenizer):
+        self._tokenizer = iter(tokenizer)
+        self._load_next()
 
-    def advance(self):
-        self._index += 1
+    def _load_next(self):
+        try:
+            self._peeked_value = next(self._tokenizer)
+            while self._peeked_value is None:
+                self._peeked_value = next(self._tokenizer)
+        except StopIteration:
+            self._peeked_value = None
+
+    def discard_peeked_value(self):
+        self._peeked_value = None
 
     def next(self):
         result = self.peek()
-        self._index += 1
+        self._peeked_value = None
         return result
 
     def peek(self):
-        if self._index >= len(self._token_list):
-            return None
-        return self._token_list[self._index]
+        if not self._peeked_value:
+            self._load_next()
+        return self._peeked_value
 
 
 class Tokenizer(object):
     def __init__(self, open_file):
         self._chars = character_source(open_file)
         self._current_element = []
-        self._token_list = []
 
     def _finish_current_token(self):
-        token = ''.join(self._current_element)
-        if token:
-            self._token_list.append(tokens.Element(token))
+        token_text = ''.join(self._current_element)
         self._current_element = []
+        return tokens.Element(token_text) if token_text else None
 
-    def get_tokens(self):
+    def __iter__(self):
         for char in self._chars:
             if char == "(":
-                self._finish_current_token()
-                self._token_list.append(tokens.OpenParen())
+                yield self._finish_current_token()
+                yield tokens.OpenParen()
             elif char == ")":
-                self._finish_current_token()
-                self._token_list.append(tokens.CloseParen())
+                yield self._finish_current_token()
+                yield tokens.CloseParen()
             elif char in string.whitespace:
-                self._finish_current_token()
+                yield self._finish_current_token()
             else:
                 # TODO(jasonpr): Handle escaping.
                 self._current_element.append(char)
-        self._finish_current_token()
-        return TokenSupply(self._token_list)
+        yield self._finish_current_token()
+
 
 
 def character_source(lines):

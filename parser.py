@@ -22,7 +22,7 @@ def _parse_list(token_supply):
     while not isinstance(token_supply.peek(), tokens.CloseParen):
         result.append(_parse(token_supply))
     # Move past the closing parenthesis.
-    token_supply.advance()
+    token_supply.discard_peeked_value()
     return result
 
 

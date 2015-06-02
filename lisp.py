@@ -11,7 +11,7 @@ import tokenizer
 
 
 def _execute_file(code_file, env, print_results=False):
-    tokens = tokenizer.Tokenizer(code_file).get_tokens()
+    tokens = tokenizer.TokenSupply(tokenizer.Tokenizer(code_file))
     # Are there useful ways to clean up a parse tree before we start
     # calling it an AST?
     # TODO(jasonpr): Investigate.
