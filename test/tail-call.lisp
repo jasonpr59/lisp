@@ -1,10 +1,9 @@
 (define count
   (lambda (n)
-    (begin
      (print! n)
      (if (< n 10000)
 	 (count (+ n 1))
-       n))))
+       n)))
 
 (count 0)
 
@@ -16,8 +15,7 @@
 
 (define count-b
   (lambda (n)
-    (begin
      (print! n)
-     (count-a (+ n 1)))))
+     (count-a (+ n 1))))
 
 (count-a 0)
