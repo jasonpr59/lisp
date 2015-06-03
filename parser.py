@@ -10,8 +10,6 @@ def _parse(token_supply):
         return _parse_list(token_supply)
     elif isinstance(token, tokens.Element):
         return _parse_element(token_supply)
-    elif isinstance(token, tokens.IntLiteral):
-        return parse_int_literal(token_supply)
     else:
         raise TypeError('Unexpected token type for %s.' % token)
 
@@ -24,7 +22,7 @@ def _parse_list(token_supply):
     while not isinstance(token_supply.peek(), tokens.CloseParen):
         result.append(_parse(token_supply))
     # Move past the closing parenthesis.
-    token_supply.advance()
+    token_supply.discard_peeked_value()
     return result
 
 
