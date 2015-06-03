@@ -18,7 +18,7 @@ def _eval(expr, env, force=True):
     value  = _eval_no_force(expr, env)
     if force:
         while isinstance(value, _DelayedCall):
-            value = _eval_no_force(value.function.expr, value.invocation_env)
+            value = _eval_begin(value.function.exprs, value.invocation_env)
     return value
 
 
@@ -98,14 +98,30 @@ def _eval_if(data, env):
 
 
 def _eval_define(data, env):
-    assert len(data) == 2
-    name, expr = data
+    assert data
+    defined = data[0]
+
+    if isinstance(defined, list):
+        assert len(data) >= 2
+        _eval_define_function(defined, data[1:], env)
+    else:
+        assert len(data) == 2
+        _eval_define_variable(defined, data[1], env)
+
+
+def _eval_define_variable(name, expr, env):
     env[name] = _eval(expr, env)
 
 
+def _eval_define_function(definition_spec, implementation, env):
+    assert definition_spec
+    func_name, arg_names = definition_spec[0], definition_spec[1:]
+    env[func_name] = datatypes.LispFunction(env, arg_names, implementation)
+
+
 def _eval_lambda(data, env):
-    assert len(data) == 2
-    arg_names, implementation = data
+    assert len(data) >= 2
+    arg_names, implementation = data[0], data[1:]
     return datatypes.LispFunction(env, arg_names, implementation)
 
 

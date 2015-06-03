@@ -12,13 +12,13 @@ class Symbol(DataType):
 
 
 class LispFunction(object):
-    def __init__(self, env, arg_names, expr):
+    def __init__(self, env, arg_names, exprs):
         self.env = env
         self.arg_names = arg_names
-        self.expr = expr
+        self.exprs = exprs
 
     def __repr__(self):
-        return "LispFunction[%s -> %s]" % (self.arg_names, self.expr)
+        return "LispFunction[%s -> %s]" % (self.arg_names, self.exprs)
 
 class Pair(namedtuple('Pair', ['car', 'cdr'])):
     def __repr__(self):
