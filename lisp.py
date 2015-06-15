@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""The main driver for the Lisp system."""
+
 import sys
 
 import environment
@@ -11,6 +13,14 @@ import tokenizer
 
 
 def _execute_file(code_file, env, print_results=False):
+    """Execute some lisp.
+
+    Args:
+       code_file: An iterator over lines of Lisp text.
+       env: The base environment.
+       print_results: Whether to print the value of each top-level expression.
+    """
+
     tokens = tokenizer.TokenSupply(tokenizer.Tokenizer(code_file))
     # Are there useful ways to clean up a parse tree before we start
     # calling it an AST?
@@ -21,6 +31,11 @@ def _execute_file(code_file, env, print_results=False):
             print formatter.lisp_format(evaluation)
 
 def _base_env():
+    """Make a base environment.
+
+    Contains functions implemented in Python, and functions defined
+    as Lisp in standard libraries.
+    """
     env = environment.Environment()
 
     # Provide some builtin functions, written in Python.
@@ -36,10 +51,12 @@ def _base_env():
     return env
 
 def _line_reader():
+    """Read and yield lines of Lisp text."""
     while True:
         yield raw_input('jlisp > ')
 
 def main(argv):
+    """Execute a Lisp script if provided, otherwise run a REPL."""
     base_env = _base_env()
 
     if len(argv) >= 2:
