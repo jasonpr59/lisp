@@ -1,19 +1,28 @@
+"""The interpreter, including the eval-apply magic.
+
+Implements proper tail recursion using _DelayedCalls.
+"""
+
 import string
 import types
 
 import datatypes
 
 def execute(ast, env):
-    """The simple public interface to the evaluation system."""
+    """The simple public interface to the evaluation system.
+
+    Evaluates an expression in a base environment and returns the result.
+    """
     return _eval(ast, env)
 
 
 def _eval(expr, env, force=True):
     """Evaluate an expression in an environment.
 
-    If 'force' is false, then this function could return a _DelayedCall,
+    If 'force' is False, then this function may return a _DelayedCall,
     which would need to be resolved later on.  If 'force' is True, a
-    _DelayedCall could be returned, unresolved.
+    _DelayedCall may not be returned unresolved: we must resolve it before
+    returning.
     """
     value  = _eval_no_force(expr, env)
     if force:
@@ -35,6 +44,7 @@ def _eval_no_force(expr, env):
 
 
 def _eval_value(expr, env):
+    """Evaluate a non-list in an environment."""
     # TODO(jasonpr): Move some of this into the lex/parse logic.
     if expr[0] in string.digits:
         return int(expr)
@@ -53,6 +63,10 @@ def _eval_value(expr, env):
 
 
 def _eval_list(expr, env):
+    """Evaluate a list.
+
+    This may be special syntax, or it maybe be a function call.
+    """
     if not expr:
         # It's a null value
         return datatypes.null
@@ -68,10 +82,18 @@ def _eval_list(expr, env):
 
 
 class Applier(object):
+    """Apply a function.
+
+    When an Applier object is called, with some Lisp arguments and an
+    environment, the args are first evaluated in that environment. Then,
+    they are passed to the function itself.  If the function is a
+    LispFunction, the application involves evaluating the function's body.
+    """
     def __init__(self, function):
         self._function = function
 
     def __call__(self, lisp_args, env):
+        """Evaluate the arguments and apply the function."""
         inputs = [_eval(arg, env) for arg in lisp_args]
         if isinstance(self._function, types.FunctionType):
             # It's a builtin Python function.
@@ -89,6 +111,7 @@ class Applier(object):
 
 # Evaluators.
 def _eval_if(data, env):
+    """Evaluate an 'if' expression."""
     assert len(data) == 3
     cond_expr, true_case_expr, false_case_expr = data
     cond_value = _eval(cond_expr, env)
@@ -98,6 +121,7 @@ def _eval_if(data, env):
 
 
 def _eval_define(data, env):
+    """Evaluate a 'define' expression."""
     assert data
     defined = data[0]
 
@@ -110,27 +134,35 @@ def _eval_define(data, env):
 
 
 def _eval_define_variable(name, expr, env):
+    """Helper function for defining a variable with a value."""
     env[name] = _eval(expr, env)
 
 
 def _eval_define_function(definition_spec, implementation, env):
+    """Helper function for defining a function."""
     assert definition_spec
     func_name, arg_names = definition_spec[0], definition_spec[1:]
     env[func_name] = datatypes.LispFunction(env, arg_names, implementation)
 
 
 def _eval_lambda(data, env):
+    """Evaluate a 'lambda' expression."""
     assert len(data) >= 2
     arg_names, implementation = data[0], data[1:]
     return datatypes.LispFunction(env, arg_names, implementation)
 
 
 def _eval_set(data, env):
+    """Evaluate a 'set!' expression."""
     assert len(data) == 2
     name, expr = data
     return env.redefine(name, _eval(expr, env))
 
 def _eval_begin(expressions, env):
+    """Evaluate a sequence of expressions.
+
+    The resulting value is the last expression's value.
+    """
     for expression in expressions[:-1]:
         result = _eval(expression, env)
 
@@ -143,6 +175,7 @@ def _eval_begin(expressions, env):
         return None
 
 def _eval_let(data, enclosing_env):
+    """Evaluate a 'let' expression."""
     assert data
     bindings, exprs = data[0], data[1:]
 
@@ -184,6 +217,7 @@ class _DelayedCall(object):
 
 
 def _is_truthy(value):
+    """Return False iff value is #f."""
     # Scheme defines nearly everything to be truthy.  Only #f is falsey!
     # TODO(jasonpr): Consider violating the Scheme spec, and doing
     # something more Pythonic.

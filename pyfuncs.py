@@ -1,3 +1,5 @@
+"""Base functions to be called on Lisp data, implemented in Python."""
+
 import operator
 
 import datatypes
@@ -39,7 +41,7 @@ def _cons(args):
     assert len(args) == 2
     return datatypes.Pair(args[0], args[1])
 
-def _make_list(args):
+def _list(args):
     result = datatypes.null
     for element in reversed(args):
         result = _cons([element, result])
@@ -70,7 +72,7 @@ functions = {
     '-': _sub,
     '*': _mul,
     '/': _div,
-    'list': _make_list,
+    'list': _list,
     'cons': _cons,
     'car': _car,
     'cdr': _cdr,
