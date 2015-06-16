@@ -44,22 +44,12 @@ def _eval_no_force(expr, env):
 
 def _eval_value(expr, env):
     """Evaluate a non-list in an environment."""
-    # TODO(jasonpr): Move some of this into the lex/parse logic.
-    if expr[0] in string.digits:
-        return datatypes.Fraction(expr)
-    elif expr[0] == "'":
-        return datatypes.Symbol(expr)
-    elif expr[0] == '#':
-        if expr == '#t':
-            return datatypes.lisp_bool(True)
-        elif expr == '#f':
-            return datatypes.lisp_bool(False)
-        else:
-            raise ValueError('Unexpected literal `%s`.' % expr)
-    else:
-        # Assume it's a variable.
+    if isinstance(expr, str):
+        # Strings represent variables.
         return env[expr]
-
+    else:
+        # Everything else evaluates to itself.
+        return expr
 
 def _eval_list(expr, env):
     """Evaluate a list.
