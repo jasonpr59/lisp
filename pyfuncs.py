@@ -8,6 +8,11 @@ def _add(*args):
     return sum(args)
 
 def _sub(first, *rest):
+    # Single-argument _sub is additive inversion.
+    # For example, (- 5) is -5.
+    if not rest:
+        return -first
+
     return first - sum(rest)
 
 def _mul(*args):
@@ -15,9 +20,13 @@ def _mul(*args):
 
 def _div(numerator, *denominators):
     # TODO(jasonpr): Use fractions, not floating point?
-    # The result, args[0] / prod(args[1:]), is the same as
-    # args[0]**2 / prod(args).
-    result = numerator
+
+    # Single-argument _div is multiplicative inversion.
+    # For example, (/ 5) is 1/5.
+    if not denominators:
+        return 1.0 / numerator
+
+    result = 1.0 * numerator
     for denom in denominators:
         result /= denom
     return result
