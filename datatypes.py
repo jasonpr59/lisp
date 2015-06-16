@@ -36,6 +36,44 @@ class Pair(namedtuple('Pair', ['car', 'cdr'])):
     def __repr__(self):
         return '(%s . %s)' % self
 
+class Vector(DataType):
+    """A collection with O(1) access of any element. """
+    def __init__(self, elements):
+        self._elements = elements
+
+    def get(self, num):
+        return self._elements[num]
+
+    def set(self, num, value):
+        # TODO(jasonpr): Determine when to allow vector mutation.
+        self._elements[num] = value
+
+    @classmethod
+    def make(cls, length, fill_value=0):
+        backing_list = [fill_value] * length
+        return cls(backing_list)
+
+    def length(self):
+        return len(self._elements)
+
+    def as_list(self):
+        # TODO(jasonpr): Implement once we've reconciled Python lists
+        # with Lisp lists.
+        raise NotImplementedError
+
+    @classmethod
+    def from_list(cls, source_list):
+        # TODO(jasonpr): Implement once we've reconciled Python lists
+        # with Lisp lists.
+        raise NotImplementedError
+
+    def fill(self, fill_value):
+        new_backing_list = [fill_value] * self.length()
+        self._elements = new_backing_list
+
+    def __repr__(self):
+        return '#(' + ' '.join(str(elt) for elt in self._elements) + ')'
+
 class _Boolean(DataType):
     """A boolean, with a Scheme-like #t/#f representation."""
     def __init__(self, value):

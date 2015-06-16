@@ -4,7 +4,6 @@ Implements proper tail recursion using _DelayedCalls.
 """
 
 import string
-import types
 
 import datatypes
 
@@ -95,18 +94,18 @@ class Applier(object):
     def __call__(self, lisp_args, env):
         """Evaluate the arguments and apply the function."""
         inputs = [_eval(arg, env) for arg in lisp_args]
-        if isinstance(self._function, types.FunctionType):
+        if isinstance(self._function, datatypes.LispFunction):
+            # It's a LispFunction.
+            assert len(inputs) == len(self._function.arg_names)
+            invocation_env = self._function.env.child()
+            for name, value in zip(self._function.arg_names, inputs):
+                invocation_env[name] = value
+            # Return a delayed call, and let the calling context determine
+            # whether it must be resolved immediately.
+            return _DelayedCall(self._function, invocation_env)
+        else:
             # It's a builtin Python function.
             return self._function(inputs)
-
-        # Otherwise, it's a LispFunction.
-        assert len(inputs) == len(self._function.arg_names)
-        invocation_env = self._function.env.child()
-        for name, value in zip(self._function.arg_names, inputs):
-            invocation_env[name] = value
-        # Return a delayed call, and let the calling context determine
-        # whether it must be resolved immediately.
-        return _DelayedCall(self._function, invocation_env)
 
 
 # Evaluators.
