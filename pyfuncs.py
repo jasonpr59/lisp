@@ -45,7 +45,7 @@ def _cons(car, cdr):
 def _list(*elements):
     result = datatypes.null
     for element in reversed(elements):
-        result = _cons([element, result])
+        result = _cons(element, result)
     return result
 
 def _gt(left, right):
