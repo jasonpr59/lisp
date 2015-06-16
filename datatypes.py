@@ -20,16 +20,14 @@ def assert_int(value):
     assert isinstance(value, int) or value.denominator == 1
     return int(value)
 
-class Symbol(DataType):
-    """A Scheme symbol equivalent.
 
-    TODO(jasonpr): Justify the existence of symbols in this language.
-    """
-    def __init__(self, name):
-        self.name = name
+class Symbol(DataType):
+    """A Scheme symbol equivalent."""
+    def __init__(self, value):
+        self.value = value
 
     def __repr__(self):
-        return 'Symbol(%s)' % self.name
+        return str(self.value)
 
 
 class LispFunction(DataType):
