@@ -39,7 +39,7 @@ class Pair(namedtuple('Pair', ['car', 'cdr'])):
 class Vector(DataType):
     """A collection with O(1) access of any element. """
     def __init__(self, elements):
-        self._elements = elements
+        self._elements = list(elements)
 
     def get(self, num):
         return self._elements[num]
