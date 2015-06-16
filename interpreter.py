@@ -105,7 +105,7 @@ class Applier(object):
             return _DelayedCall(self._function, invocation_env)
         else:
             # It's a builtin Python function.
-            return self._function(inputs)
+            return self._function(*inputs)
 
 
 # Evaluators.
