@@ -61,6 +61,7 @@ class Tokenizer(object):
         # special character. At that point those characters are
         # assembled into a token.
         self._current_element = []
+        self._in_comment = False
 
     def _finish_current_token(self):
         token_text = ''.join(self._current_element)
@@ -69,6 +70,13 @@ class Tokenizer(object):
 
     def __iter__(self):
         for char in self._chars:
+            if char == ';':
+                self._in_comment = True
+            if self._in_comment:
+                if char == '\n':
+                    self._in_comment = False
+                continue
+
             if char == "(":
                 yield self._finish_current_token()
                 yield tokens.OpenParen()
