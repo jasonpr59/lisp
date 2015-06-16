@@ -36,15 +36,14 @@ def _parse_integer(token_supply):
     assert isinstance(int_token, tokens.Integer)
     return datatypes.Fraction(int(int_token.text))
 
+
 def _parse_quotation(token_supply):
-    """Parse a symbol."""
+    """Parse a quotation."""
     quote_token = token_supply.next()
     assert isinstance(quote_token, tokens.Quote)
-    quoted_token = token_supply.next()
-    if isinstance(quoted_token, tokens.OpenParen):
-        # TODO(jasonpr): Implement deep quoting.
-        raise NotImplementedError('We can only quote single tokens for now.')
-    return datatypes.Symbol(quoted_token.text)
+    quoted_syntax = _parse(token_supply)
+    return ['quote', quoted_syntax]
+
 
 def _parse_boolean(token_supply):
     """Parse a boolean literal."""
