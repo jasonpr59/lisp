@@ -181,6 +181,16 @@ def _eval_let(data, enclosing_env):
     # as though they were enclosed in a `begin` statement.
     return _eval_begin(exprs, new_env)
 
+def _eval_quote(data, env):
+    assert len(data) == 1
+    quoted_syntax_tree = data[0]
+    if isinstance(quoted_syntax_tree, list):
+        # TODO(jasonpr): Use a Lisp list.
+        return [_eval_quote([subtree], env) for subtree in quoted_syntax_tree]
+    else:
+        return datatypes.Symbol(quoted_syntax_tree)
+
+
 evaluators = {
     'if': _eval_if,
     'define': _eval_define,
@@ -188,6 +198,7 @@ evaluators = {
     'set!': _eval_set,
     'begin': _eval_begin,
     'let': _eval_let,
+    'quote': _eval_quote,
 }
 
 
