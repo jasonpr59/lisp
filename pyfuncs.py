@@ -67,6 +67,34 @@ def _print(args):
     for arg in args:
         print arg
 
+def _is_vector(args):
+    assert len(args) == 1
+    vector = args[0]
+    return datatypes.lisp_bool(isinstance(vector, datatypes.Vector))
+
+# TODO(jasonpr): Figure out a good way to get rid of these
+# intermediate functions that check the type and call a method.
+def _vector_length(args):
+    assert len(args) == 1
+    vector = args[0]
+    assert isinstance(vector, datatypes.Vector)
+    return vector.length()
+
+def _vector_ref(args):
+    vector, num = args
+    assert isinstance(vector, datatypes.Vector)
+    return vector.get(num)
+
+def _vector_set(args):
+    vector, num, value = args
+    assert isinstance(vector, datatypes.Vector)
+    vector.set(num, value)
+
+def _vector_fill(args):
+    vector, fill_value = args
+    assert isinstance(vector, datatypes.Vector)
+    vector.fill(fill_value)
+
 functions = {
     '+': _add,
     '-': _sub,
@@ -81,4 +109,11 @@ functions = {
     '>=': _ge,
     '<=': _le,
     'print!': _print,
+    'vector': datatypes.Vector,
+    'make-vector': lambda args: datatypes.Vector.make(*args),
+    'vector?': _is_vector,
+    'vector-length': _vector_length,
+    'vector-ref': _vector_ref,
+    'vector-set!': _vector_set,
+    'vector-fill!': _vector_fill,
 }
