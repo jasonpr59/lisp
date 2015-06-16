@@ -16,7 +16,7 @@ matchers = (
     (re.compile(r'#\[a-zA-Z]'), tokens.CharLiteral),
     (re.compile(r'#[tfTF]'), tokens.BooleanLiteral),
     (re.compile(r'#\('), tokens.OpenVector),
-    (re.compile(r'"([^"\\]|\\")*"'), tokens.String),
+    (re.compile(r'"([^"\\]|\\"|\\\\)*"'), tokens.String),
     (re.compile(r';.*$'), tokens.Comment),
 )
 
