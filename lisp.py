@@ -7,9 +7,9 @@ import sys
 import environment
 import formatter
 import interpreter
+import lexer
 import parser
 import pyfuncs
-import tokenizer
 
 
 def _execute_file(code_file, env, print_results=False):
@@ -21,7 +21,7 @@ def _execute_file(code_file, env, print_results=False):
        print_results: Whether to print the value of each top-level expression.
     """
 
-    tokens = tokenizer.TokenSupply(tokenizer.Tokenizer(code_file))
+    tokens = lexer.TokenSupply(lexer.lisp_tokens(code_file))
     # Are there useful ways to clean up a parse tree before we start
     # calling it an AST?
     # TODO(jasonpr): Investigate.
