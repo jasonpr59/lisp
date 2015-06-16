@@ -1,13 +1,24 @@
 from collections import namedtuple
+import fractions
+
 
 class DataType(object):
     """ABC for Lisp Datatypes.
 
     We do not guarantee that all Lisp data inherrits from DataType.
-    In particular, some Lisp data is simply represented by a basic
-    Python type, like int.
     """
 
+class Fraction(DataType, fractions.Fraction):
+    def __repr__(self):
+        if self.denominator == 1:
+            print 'NUM %s' % self.numerator
+            return '%s' % self.numerator
+        else:
+            return '%s/%s' % (self.numerator, self.denominator)
+
+def assert_int(value):
+    assert isinstance(value, int) or value.denominator == 1
+    return int(value)
 
 class Symbol(DataType):
     """A Scheme symbol equivalent.
@@ -42,19 +53,19 @@ class Vector(DataType):
         self._elements = list(elements)
 
     def get(self, num):
-        return self._elements[num]
+        return self._elements[assert_int(num)]
 
     def set(self, num, value):
         # TODO(jasonpr): Determine when to allow vector mutation.
-        self._elements[num] = value
+        self._elements[assert_int(num)] = value
 
     @classmethod
     def make(cls, length, fill_value=0):
-        backing_list = [fill_value] * length
+        backing_list = [fill_value] * assert_int(length)
         return cls(backing_list)
 
     def length(self):
-        return len(self._elements)
+        return Fraction(len(self._elements))
 
     def as_list(self):
         # TODO(jasonpr): Implement once we've reconciled Python lists
@@ -68,7 +79,7 @@ class Vector(DataType):
         raise NotImplementedError
 
     def fill(self, fill_value):
-        new_backing_list = [fill_value] * self.length()
+        new_backing_list = [fill_value] * len(self._elements)
         self._elements = new_backing_list
 
     def __repr__(self):

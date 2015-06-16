@@ -46,7 +46,7 @@ def _eval_value(expr, env):
     """Evaluate a non-list in an environment."""
     # TODO(jasonpr): Move some of this into the lex/parse logic.
     if expr[0] in string.digits:
-        return int(expr)
+        return datatypes.Fraction(expr)
     elif expr[0] == "'":
         return datatypes.Symbol(expr)
     elif expr[0] == '#':

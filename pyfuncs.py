@@ -24,9 +24,9 @@ def _div(numerator, *denominators):
     # Single-argument _div is multiplicative inversion.
     # For example, (/ 5) is 1/5.
     if not denominators:
-        return 1.0 / numerator
+        return 1 / numerator
 
-    result = 1.0 * numerator
+    result = numerator
     for denom in denominators:
         result /= denom
     return result
@@ -71,7 +71,7 @@ def _is_vector(candidate):
 # intermediate functions that check the type and call a method.
 def _vector_length(vector):
     assert isinstance(vector, datatypes.Vector)
-    return vector.length()
+    return datatypes.Fraction(vector.length())
 
 def _vector_ref(vector, num):
     assert isinstance(vector, datatypes.Vector)
